@@ -1,0 +1,6 @@
+{
+    "modules": [
+        "scan_port",
+        "get_disk_usage"
+      ]
+}
