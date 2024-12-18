@@ -1,6 +1,26 @@
 {
-    "modules": [
-        "scan_port",
-        "get_disk_usage"
-      ]
+  "poll_interval": 60,
+  "modules": [
+    {
+      "name": "portscanner",
+      "enabled": true,
+      "config": {
+        "target_ip": "192.168.1.1",
+        "ports": [21, 22, 80, 443],
+        "range_from": 1,
+        "range_to": 1024,
+        "threaded": true
+      }
+    },
+    {
+      "name": "system_enumeration",
+      "enabled": true,
+      "config": {
+        "scan_network": true,
+        "get_active_connections": true,
+        "get_system_info": true,
+        "check_running_processes": true
+      }
+    }
+  ]
 }
