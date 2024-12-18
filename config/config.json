@@ -11,7 +11,7 @@
           "ip": "192.168.1.59",
           "ports": [21, 22, 80, 443],
           "range_from": 1,
-          "range_to": 1024,
+          "range_to": 10,
           "threaded": true
         }
       }
