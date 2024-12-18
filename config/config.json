@@ -4,22 +4,25 @@
     {
       "name": "portscanner",
       "enabled": true,
-      "config": {
-        "target_ip": "192.168.1.1",
-        "ports": [21, 22, 80, 443],
-        "range_from": 1,
-        "range_to": 10,
-        "threaded": true
+      "functions": {
+        "discover_ips": ["192.168.1"],
+        "scan_common_ports": ["192.168.1.59", true],
+        "scan_target": {
+          "target_ip": "192.168.1.1",
+          "ports": [21, 22, 80, 443],
+          "range_from": 1,
+          "range_to": 10,
+          "threaded": true
+        }
       }
     },
     {
       "name": "system_enumeration",
       "enabled": true,
-      "config": {
-        "scan_network": true,
-        "get_active_connections": true,
-        "get_system_info": true,
-        "check_running_processes": true
+      "functions": {
+        "get_active_connections": [],
+        "get_system_info": [],
+        "list_running_processes": []
       }
     }
   ]
