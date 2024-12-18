@@ -8,10 +8,10 @@
         "discover_ips": ["192.168.1"],
         "scan_common_ports": ["192.168.1.59", true],
         "scan_target": {
-          "target_ip": "192.168.1.1",
+          "target_ip": "192.168.1.59",
           "ports": [21, 22, 80, 443],
           "range_from": 1,
-          "range_to": 10,
+          "range_to": 1024,
           "threaded": true
         }
       }
