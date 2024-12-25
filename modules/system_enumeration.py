@@ -156,6 +156,27 @@ def get_hostname():
     return hostname
 
 
+def run(functions):
+    results = {}
+    for func_name, params in functions.items():
+        try:
+            target_function = globals().get(func_name)
+            if not callable(target_function):
+                results[func_name] = "Function not found"
+                print(f"[ERROR] Function '{func_name}' not found.")
+                continue
+            if isinstance(params, list):
+                results[func_name] = target_function(*params)
+            else:
+                results[func_name] = target_function()
+            print(f"[INFO] Executed {func_name}: {results[func_name]}")
+        except Exception as e:
+            print(f"[ERROR] Failed to execute {func_name}: {e}")
+            results[func_name] = f"Error: {e}"
+    return {"status": "success", "results": results}
+
+
+
 # Run everything
 if __name__ == "__main__":
-    get_public_ip()
+    get_mac_address()

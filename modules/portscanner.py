@@ -30,7 +30,7 @@ def scan_target(ip, ports=[], range_from=0, range_to=0, threaded=False):
     open_ports = []
     if range_from == 0 and range_to == 0:
         if threaded:
-            multi_threaded_scan(ip, ports)
+            open_ports = multi_threaded_scan(ip, ports)
         else:
             for port in ports:
                 if scan_port(ip, port):
@@ -38,47 +38,51 @@ def scan_target(ip, ports=[], range_from=0, range_to=0, threaded=False):
     else:
         ports_to_scan = list(range(range_from, range_to + 1))
         if threaded:
-            multi_threaded_scan(ip, ports_to_scan)
+            open_ports = multi_threaded_scan(ip, ports_to_scan)
         else:
             for port in ports_to_scan:
                 if scan_port(ip, port):
                     open_ports.append(port)
-
     return open_ports
 
 
 def scan_common_ports(ip, threaded=False):
     common_ports = [21, 22, 25, 53, 67, 68, 80, 110, 123, 143, 443, 465, 631, 993, 995, 3306, 3389, 8080]
+    open_ports = []
     if threaded:
-        multi_threaded_scan(ip, common_ports)
+        open_ports = multi_threaded_scan(ip, common_ports)
     else:
-        open_ports = []
         for port in common_ports:
             if scan_port(ip, port):
                 open_ports.append(port)
-        print(f"[INFO] Open common ports: {open_ports}")
+    print(f"[INFO] Open common ports: {open_ports}")
+    return open_ports
 
 
-def threader(ip):
+def threader(ip, open_ports):
     while True:
         port = q.get()
-        scan_port(ip, port)
+        if scan_port(ip, port):
+            open_ports.append(port)
         q.task_done()
 
-
 def multi_threaded_scan(ip, ports, num_threads=4):
-    for x in range(num_threads):
-        t = threading.Thread(target=threader, args=(ip,))
+    open_ports = []
+
+    print(f"[INFO] Starting multithreaded scan on {ip}...")
+
+    for _ in range(num_threads):
+        t = threading.Thread(target=threader, args=(ip, open_ports))
         t.daemon = True
         t.start()
-
-    start = time.time()
 
     for port in ports:
         q.put(port)
 
     q.join()
-    print(f"[INFO] Scan completed in {round(time.time() - start, 2)} seconds")
+    print(f"[INFO] Scan completed. Found ports: {open_ports}")
+    return open_ports
+
 
 
 def discover_ips(subnet, timeout=1):
@@ -148,6 +152,25 @@ def get_ip_details(ip):
         print(f"[ERROR] no details found for IP: {ip}")
         return {"IP": ip, "Hostname": "Unknown"}
 
+
+def run(functions):
+    results = {}
+    for func_name, params in functions.items():
+        try:
+            target_function = globals().get(func_name)
+            if not callable(target_function):
+                results[func_name] = "Function not found"
+                print(f"[ERROR] Function '{func_name}' not found.")
+                continue
+            if isinstance(params, list):
+                results[func_name] = target_function(*params)
+            else:
+                results[func_name] = target_function(**params)
+            print(f"[INFO] Executed {func_name} with result: {results[func_name]}")
+        except Exception as e:
+            print(f"[ERROR] Failed to execute {func_name}: {e}")
+            results[func_name] = f"Error: {e}"
+    return {"status": "success", "results": results}
 
 
 if __name__ == "__main__":
