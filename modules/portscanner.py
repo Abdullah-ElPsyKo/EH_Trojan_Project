@@ -63,23 +63,41 @@ def threader(ip, open_ports):
     while True:
         port = q.get()
         if scan_port(ip, port):
-            open_ports.append(port)
+            with print_lock:  # globale lock
+                open_ports.append(port)
         q.task_done()
+
 
 def multi_threaded_scan(ip, ports, num_threads=4):
     open_ports = []
+    print(f"[INFO] Starting multithreaded scan on {ip} with {num_threads} threads...")
 
-    print(f"[INFO] Starting multithreaded scan on {ip}...")
+    def threader():
+        while not q.empty():
+            port = q.get()
+            if scan_port(ip, port):
+                with print_lock:
+                    open_ports.append(port)
+            q.task_done()
 
-    for _ in range(num_threads):
-        t = threading.Thread(target=threader, args=(ip, open_ports))
-        t.daemon = True
-        t.start()
-
+    # Vul de queue met poorten
     for port in ports:
         q.put(port)
 
+    # Start threads
+    threads = []
+    for _ in range(num_threads):
+        t = threading.Thread(target=threader)
+        t.start()
+        threads.append(t)
+
+    # Wacht tot alle taken in de queue zijn verwerkt
     q.join()
+
+    # Wacht tot alle threads klaar zijn
+    for t in threads:
+        t.join()
+
     print(f"[INFO] Scan completed. Found ports: {open_ports}")
     return open_ports
 
