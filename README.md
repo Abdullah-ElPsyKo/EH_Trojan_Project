@@ -59,6 +59,10 @@ De modules zijn getest in een virtuele omgeving. Resultaten:
 - **Portscanner**: Snelheid en accuraatheid van poortscans zijn goed.
 - **System Enumeration**: Systeeminformatie en netwerkgegevens worden correct weergegeven.
 
+### **Ethische overwegingen**
+De functionaliteit van deze Trojan kan in verkeerde handen veel schade aanrichten. Tijdens de ontwikkeling heb ik geprobeerd ethisch te blijven door:
+- De code alleen te gebruiken in een virtuele testomgeving.
+- De repo op private te houden.
 ---
 
 ## Reflectie
@@ -78,6 +82,8 @@ De modules zijn getest in een virtuele omgeving. Resultaten:
 - **GitHub-integratie**: Het dynamisch ophalen van modules en uploaden van resultaten gaf me inzicht in hoe versiebeheer en automatisering hand in hand kunnen gaan.
 
 ---
+
+
 
 ## Eindproducten
 
