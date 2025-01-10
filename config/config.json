@@ -21,9 +21,7 @@
               },
               "discover_ips": ["192.168.1", 1],
               "detect_os": [["192.168.1.59"]],
-              "get_ip_details": ["192.168.1.59"],
-              "threader": ["192.168.1.59", []]
-          }
+              "get_ip_details": ["192.168.1.59"]          }
       },
       {
           "name": "system_enumeration",
