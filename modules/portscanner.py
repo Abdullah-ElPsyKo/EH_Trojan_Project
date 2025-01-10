@@ -145,7 +145,7 @@ def detect_os(ips, timeout=1):
 
 def get_ip_details(ip):
     try:
-        hostname = socket.gethostbyaddr(ip)[0]
+        hostname = socket.gethostbyaddr(ip)
         print(f"[INFO] IP Details for {ip}: Hostname - {hostname}")
         return {"IP": ip, "Hostname": hostname}
     except socket.herror:
