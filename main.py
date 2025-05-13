@@ -10,7 +10,7 @@ import requests
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "GITHUB_TOKEN" # REVOKED, ACCESS TO GITHUB REPO
 REPO_NAME = "Abdullah-ElPsyKo/EH_Trojan_Project"
 CONFIG_FILE = "config/config.json"
 DATA_DIR = "data"
