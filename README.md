@@ -1,5 +1,7 @@
 # Afwerken, testen en eindreflectie
 
+## Strictly for educational purposes. This was part of a school project.
+
 ## Doel
 De opdracht voor deze laatste weken was om de Trojan af te werken, te testen in een veilige en gecontroleerde omgeving.
 
